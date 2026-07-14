@@ -1,0 +1,90 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  max-width: 500px;
+}
+
+.app {
+  background: #16213e;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.app h1 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #0f3460;
+  text-align: center;
+}
+
+.app-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #0f3460;
+  border-radius: 8px;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.app-input:focus {
+  border-color: #e94560;
+}
+
+.output {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #0f3460;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  word-break: break-all;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #0f3460;
+}
+
+.counter button {
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  background: #e94560;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.counter button:hover {
+  background: #c73652;
+}
+
+.counter span {
+  font-size: 1.3rem;
+  font-weight: bold;
+  min-width: 2rem;
+  text-align: center;
+}
