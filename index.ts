@@ -2,15 +2,17 @@ import { FreaktComponent, render, mount } from './src/index';
 
 class FreaktInput extends FreaktComponent<{ text: string; setText: (v: string) => void }> {
   private handleChange(evt: Event): void {
-    const input = evt.currentTarget as HTMLInputElement;
-    this.props.setText(input.value);
+    if (evt.currentTarget instanceof HTMLInputElement) {
+      this.props.setText(evt.currentTarget.value);
+    }
   }
 
   render() {
     return render('input', {
       className: 'app-input',
       value: this.props.text,
-      onInput: this.handleChange,
+      oninput: this.handleChange,
+      disabled: this.props.text.length % 10 === 0
     });
   }
 }
@@ -46,10 +48,10 @@ class Counter extends FreaktComponent {
 
   render() {
     return render('div', { className: 'counter' },
-      render('button', { onClick: this.decrement }, '-'),
-      ...(this.state123.count > 5 ? [render(LifecycleLogger, { key: 'label', label: String(this.state123.count) })] : []),
-      render('span', null, String(this.state123.count)),
-      render('button', { onClick: this.increment }, '+'),
+      render('button', { onclick: this.decrement }, '-'),
+            ...(this.state123.count > 5 ? [render(LifecycleLogger, { key: 'label', label: String(this.state123.count) })] : []),
+            render('span', null, String(this.state123.count)),
+            render('button', { onclick: this.increment }, '+'),
     );
   }
 }

@@ -109,10 +109,10 @@ describe('mount', () => {
       inc(): void { this.state = this.state + 1; }
       render(): VNode {
         return render('div', null,
-          render('button', { onClick: this.inc }, '-'),
+          render('button', { onclick: this.inc }, '-'),
           render(Label, { key: 'lbl', label: String(this.state) }),
           render('span', null, String(this.state)),
-          render('button', { onClick: this.inc }, '+'),
+          render('button', { onclick: this.inc }, '+'),
         );
       }
     }

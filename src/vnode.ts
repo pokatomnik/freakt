@@ -1,4 +1,5 @@
 import type { VNode, Child, ComponentClass } from './types';
+import type { IntrinsicProps } from './intrinsic';
 
 function normalizeChildren(items: Child[]): (VNode | string | number)[] {
   const result: (VNode | string | number)[] = [];
@@ -13,14 +14,24 @@ function normalizeChildren(items: Child[]): (VNode | string | number)[] {
   return result;
 }
 
-export function render<P extends Record<string, unknown> = Record<string, unknown>>(
-  tag: string | ComponentClass<P>,
+export function render<TTag extends keyof IntrinsicProps>(
+  tag: TTag,
+  props: (IntrinsicProps[TTag] & { key?: string | number }) | null,
+  ...children: Child[]
+): VNode;
+export function render<P extends Record<string, unknown>>(
+  tag: ComponentClass<P>,
   props: (P & { key?: string | number }) | null,
+  ...children: Child[]
+): VNode;
+export function render(
+  tag: string | ComponentClass,
+  props: Record<string, unknown> | null,
   ...children: Child[]
 ): VNode {
   const flatChildren = normalizeChildren(children);
   let key: string | number | null = null;
-  let cleanProps: Record<string, unknown> | null = props as Record<string, unknown> | null;
+  let cleanProps: Record<string, unknown> | null = props;
 
   if (props && 'key' in props) {
     key = (props as Record<string, unknown>).key as string | number | null;

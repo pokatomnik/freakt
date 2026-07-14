@@ -17,6 +17,7 @@ Freakt is a **proof-of-concept** UI library written in TypeScript that mimics a 
 - **Virtual DOM diffing** – minimal set of DOM mutations based on tree comparison
 - **Automatic method binding** – all component methods are bound to the instance automatically
 - **Batched updates** – state changes are coalesced into a single microtask flush
+- **Typed intrinsic HTML elements** – props for native tags like `'div'`, `'input'`, `'button'` are type-checked against TypeScript's built-in DOM types
 
 ## What it doesn't do (and never will)
 
@@ -77,7 +78,39 @@ This avoids the bug where non-keyed siblings were always inserted as duplicates 
 
 When a reactive setter fires, the component is pushed to a queue. A single `queueMicrotask` flush processes all dirty components in order. This avoids cascading renders within the same synchronous block.
 
-### 6. No `any` in public contracts
+### 6. Native event naming (no camelCase conversion)
+
+Unlike React (which uses `onClick`, `onChange`, etc.), Freakt uses the **exact native DOM event names** — `onclick`, `oninput`, `onchange`, `onkeydown`, and so on. The library simply strips the `on` prefix and passes the remainder directly to `addEventListener`:
+
+```typescript
+// Prop name matches the native DOM event handler property
+render('button', { onclick: this.handleClick }, 'Click me')
+//           ↑  addEventListener('click', handler)
+```
+
+This means:
+- No magic camelCase conversion — what you see is what gets registered.
+- You can use TypeScript's native `GlobalEventHandlers` types directly for full type safety.
+
+### 7. Typed intrinsic HTML elements
+
+String tags like `'div'`, `'input'`, `'button'` get their prop types from a mapping of intrinsic elements (`IntrinsicProps`). These types are derived from TypeScript's own DOM typings:
+
+```typescript
+// Fully type-checked — 'value' is string, 'disabled' is boolean, 'oninput' expects (ev: Event) => void
+render('input', { value: 'hello', disabled: false, oninput: handler })
+
+// TypeScript error: 'onclick' expects a function, not a string
+render('button', { onclick: 'not a function' })  // ❌ type error
+```
+
+The `IntrinsicProps` type:
+- Extracts event handlers from `GlobalEventHandlers` (all `on*` properties with correct event types)
+- Adds common HTML attributes (`className`, `id`, `style`, `hidden`, etc.)
+- Adds tag-specific attributes (`value` and `placeholder` for `<input>`, `href` for `<a>`, etc.)
+- Everything is optional — only the shape is checked, not presence
+
+### 8. No `any` in public contracts
 
 The exported types (`ComponentClass`, `VNode`, `Child`, `FreaktComponent`, `render`, `mount`) are fully typed with generics and `unknown` where applicable. The few remaining `as any` casts are confined to internal implementation files (`renderer.ts`, `dom.ts`).
 
@@ -91,6 +124,7 @@ src/
 ├── vnode.ts        VNode creation (render function)
 ├── component.ts    FreaktComponent base class + makeReactive
 ├── dom.ts          DOM attribute/event helpers
+├── intrinsic.ts    Typed props for native HTML elements
 ├── renderer.ts     Tree building, reconciliation, unmounting
 ├── mount.ts        Mount/unmount entry point
 └── index.ts        Public API re-exports

@@ -46,7 +46,7 @@ describe('setProps', () => {
   it('adds event listener', () => {
     const el = document.createElement('button');
     let called = false;
-    setProps(el, { onClick: () => { called = true; } });
+    setProps(el, { onclick: () => { called = true; } });
     el.click();
     expect(called).toBe(true);
   });
@@ -86,8 +86,10 @@ describe('updateProps', () => {
   it('replaces event listeners', () => {
     const el = document.createElement('button');
     let count = 0;
-    setProps(el, { onClick: () => { count = 1; } });
-    updateProps(el, { onClick: () => { count = 1; } }, { onClick: () => { count = 2; } });
+    const handler1 = () => { count = 1; };
+    const handler2 = () => { count = 2; };
+    setProps(el, { onclick: handler1 });
+    updateProps(el, { onclick: handler1 }, { onclick: handler2 });
     el.click();
     expect(count).toBe(2);
   });
@@ -95,8 +97,9 @@ describe('updateProps', () => {
   it('removes old event listeners on update', () => {
     const el = document.createElement('button');
     let called = false;
-    setProps(el, { onClick: () => { called = true; } });
-    updateProps(el, { onClick: () => { called = true; } }, { className: 'x' });
+    const handler = () => { called = true; };
+    setProps(el, { onclick: handler });
+    updateProps(el, { onclick: handler }, { className: 'x' });
     el.click();
     expect(called).toBe(false);
   });
